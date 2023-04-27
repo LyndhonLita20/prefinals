@@ -1,0 +1,24 @@
+<div id="login-box">
+  <div class="left">
+      <form #LoginForm="ngForm" (ngSubmit)="registerUser(LoginForm.value)">
+          <h1>Sign up</h1>
+          <input type="text" ngModel id="username" name="username" placeholder="username" />
+          <input type="text" ngModel id="email" name="email" placeholder="E-mail" />
+          <input type="password" ngModel id="password" name="password" placeholder="Password" />
+          
+
+          <input type="submit" id="saveData" name="signup_submit" value="Sign in" />
+      </form>
+      <a href="login">Have an account? Login</a>
+  </div>
+  <div class="right">
+    <select class="meh" type="text" id="roles" ngModel name="roles">
+        <option disabled selected value default>-- select an option</option>
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+       </select>
+  </div>
+  <div class="or">OR</div>
+</div>
+
+<!-- #LoginForm="ngForm" (ngSubmit)="registerUser(LoginForm.value)" -->

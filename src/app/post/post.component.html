@@ -1,96 +1,79 @@
+<head>
+  <meta charset="utf-8">
+  <title>Facebook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+</head>
 
+<body>
+<div *ngIf="name!=null">
 
-<div>
-    <nav class="navbar navbar-dark bg-dark justify-content-center">
-      <ul class="nav nav-brand">
-        <li class="nav-item active">
-          <a class="nav-link" routerLink="/samp">Lists of Accounts <span class="sr-only"></span></a>
-        </li>
+  <div class="container">
+      <div class="wrapper">
+        <section class="post">
+          <header>Create Post</header>
 
-        <li class="nav-item active">
-          <a class="nav-link" routerLink="/login">Log out</a>
-        </li>
-      </ul>
+          </section>
+          </div>
 
-  </nav>
+<!-- logout button -->
+      <button class="btn-primary" routerLink="/login" (click)="logout()">Logout</button><br><br>
+       
+<!-- post form -->
+       <form #registerForm="ngForm" class="center" (ngSubmit)="posted(registerForm.value)">
+           <input type="text" [(ngModel)]="name" read-only ngModel name="names" id="names" placeholder="Enter Your Name"><br><br>
+           <textarea type="text" class="textarea" ngModel [(ngModel)]="post" name="post" id="post" placeholder="What's on your mind?"></textarea><br><br>
+           <button type="post">POST</button>
+       </form>
   </div>
   
-  
-  <!-- Creates Post-->
-    <form #report="ngForm" (ngSubmit)="upload(report.value)">
-    <section style="background-color: #eee;">
-      <div class="container my-5 py-5">
-        <div class="row d-flex justify-content-center">
-          <div class="col-md-12 col-lg-10 col-xl-8">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex flex-start align-items-center">
-                  <div>
-                    <h1 class="fw-bold text-primary mb-1"[(ngModel)]="name" ngModel name="name"  class="headinput" id="name" placeholder="Name">{{name}}</h1>
-                  </div>
-                </div>
-              </div>
-              <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
-                <div class="d-flex flex-start w-100">
-                  <div class="form-outline w-100">
-                    <textarea class="form-control" id="textAreaExample" rows="4"
-                      style="background: #fff; width: 600px;" ngModel [(ngModel)]="post" name="post" id="post" placeholder="Post Something"></textarea>
-                    <label class="form-label" for="textAreaExample">Message</label>
-                  </div>
-                </div>
-                <div class="float-end mt-2 pt-1">
-                  <button type="submit" class="btn btn-primary btn-sm" ngModel [(ngModel)]="post" name="post" id="post" placeholder="post">Post </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </form>  
-  
+<br><br><br>
 
+  <div class="container" *ngFor="let userss of users | async;let i = index">
+   
+<!-- for admin -->
+     <div *ngIf="name=='admin'">
+     <h1 *ngIf="name=='admin'"><b> {{userss.names}}</b></h1>
+     <p *ngIf="name=='admin'" class="center">{{userss.post}}   <button class="btn-primary" *ngIf="name == 'admin'"  (click)="del(userss.id)">Delete Post</button>
+     </p> </div>
+      
+     <div *ngIf="name!='admin'">
+<br>
+     <h1><b> {{userss.names}}</b></h1>
+<br>
 
+     <p class="center">{{userss.post}}     <button class="btn-primary" *ngIf="name == userss.names"  (click)="del(userss.id)">Delete Post</button></p>
+     <p>Likes: {{ userss.likes?.value || 0 }}</p>
+     <button (click)="like(userss)">Like</button>
+     <button (click)="unlike(userss)">Unlike</button>
+     <br>
 
-<!-- <form #report="ngForm" (ngSubmit)="upload(report.value)">
-    <input type="text" style="text-align: center;font-weight: bold;font-size: 2em;" [(ngModel)]="name" ngModel name="name"  class="headinput" id="name" placeholder="Name"><br>
-    <textarea type="text" class="textarea" ngModel [(ngModel)]="post" name="post" id="post" placeholder="post"></textarea><br>
-    <input type="submit">
-</form> -->
-
-
-<div class="container" *ngFor="let userr of account | async; let i = index">
-
-
-<div class="container" *ngFor="let z of account | async;let i = index">
-    <div>
-        
-<h1 class="a4 cross"><b> {{z.name}}</b></h1><hr>
-<p class="center">{{z.post}}</p>
-
-    </div>
-
-<!--Post Comment Text Area-->
-<form #comment="ngForm" class="comment" (ngSubmit)="commenter(comment.value)" >
-    <input type="text" [(ngModel)]="userr.id" hidden id="id" name="id" ngModel>
-    <input type="text" hidden *ngIf="this.name != ''" style="text-align: center;font-weight: bold;font-size: 2em;" [(ngModel)]="name" readonly ngModel name="name"  class="headinput" id="name" placeholder="Name"><br>
-    <input type="text"  *ngIf="this.name != ''" class="form-control" ngModel  name="post" id="post" placeholder="Write a comment.."><br><br>
-  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <button id="btn" (click)="getComment(userr.id)">Post Comments</button>
+<!-- comment form -->
+  <form #comment="ngForm" class="comment" (ngSubmit)="comm(comment.value)" >
+          <input type="text" [(ngModel)]="userss.id" hidden id="id" name="id" ngModel>
+          <input type="text" hidden *ngIf="this.name != ''" style="text-align: center;font-weight: bold;font-size: 2em;" [(ngModel)]="name" readonly ngModel name="name"  class="headinput" id="name" placeholder="Name"><br>
+          <input type="text"  *ngIf="this.name != ''" class="form-control" ngModel  name="post" id="post" placeholder="Write a comment.."><br><br>
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <button id="btn" (click)="getComment(userss.id)">Comments</button>
   </form>
-  <!--Post Comment Text Area End-->
-  <br>
-  <br>
 
+<br><br>
 
 <!-- view comments -->
-    <div class="d-flex flex-row muted-color"> <button id="btn" (click)="getComment(userr.id)">View Comments</button></div>
+      <div class="d-flex flex-row muted-color"> <button id="btn" (click)="getComment(userss.id)">View Comments</button></div>
 
-    <div class="comment">
-    <div *ngFor="let comsec of comments | async;let commentsec = index"><span  *ngIf="userr.id == comsec.postid"><br><br>        
-    <h4 class="name font-weight-bold text-primary hand">{{comsec.name}}</h4> <br class="comment-text">{{comsec.comment}}
-
-      </span>
-    </div>
-
-</div>
-</div>
+      <div class="comments">
+      <div *ngFor="let comsec of comments | async;let commentsec = index"><span  *ngIf="userss.id == comsec.postid"><br><br>        
+      <h4 class="name font-weight-bold text-primary hand">{{comsec.name}}</h4> <br class="comment-text">{{comsec.comment}}
+      <button><div  (click)="delcomment(comsec.id)">Delete</div>      </button> <button id="btn" (click)="getReply(comsec.id)">Reply</button>
+    
+<!-- reply form -->
+    <form #reply="ngForm" *ngIf="this.replies == true" class="comment-input" (ngSubmit)="replycom(reply.value)" >
+          <input type="text" hidden *ngIf="this.name != ''" style="text-align: center;font-weight: bold;font-size: 2em;" [(ngModel)]="name" readonly ngModel name="name"  class="headinput" id="name" placeholder="Name"><br>
+          <input type="text"  *ngIf="this.name != ''" class="form-control" ngModel  name="post" id="post" placeholder="Write a reply.."><br>
+          <input   *ngIf="this.name != ''" type="submit" value="reply">
+    </form>
+                 
+          <div *ngFor="let replysec of reply | async;let replsec = index"><span  *ngIf="userss.id == comsec.postid && comsec.id == replysec.commentid"> <b>{{replysec.name}}</b> <p class="comment-text">{{replysec.reply}} <button> <p class="d-flex flex-row align-items-center status" (click)="delreply(replysec.id)">Delete</p></button> <button id="btn" (click)="getReply(comsec.id)">Reply</button></p>
+          </span>
+          </div>
+<hr>

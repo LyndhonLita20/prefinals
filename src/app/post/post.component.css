@@ -1,0 +1,118 @@
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: content-box;
+  height: max-content;
+  font-family: 'Poppins', sans-serif;
+  justify-content: center;
+}
+body{
+  display: flex;
+  align-items: center;
+  
+  min-height: 100vh;
+  background: linear-gradient(white, green
+  );
+ 
+}
+
+.container.active{
+  height: 10px;
+}
+.container .wrapper section{
+  width: 500px;
+  background: #fff;
+}
+.container .post{
+  transition: margin-left 0.18s ease;
+}
+.container.active .post{
+  margin-left: -500px;
+}
+.post header{
+  font-size: 22px;
+  font-weight: 600;
+  padding: 17px 0;
+  text-align: center;
+  border-bottom: 1px solid black;
+}
+.post form{
+  margin: 20px 25px;
+}
+.post form .content,
+.audience .list li .column{
+  display: flex;
+  align-items: center;
+}
+.post form .content img{
+  cursor: default;
+  max-width: 52px;
+}
+.post form .content .details{
+  margin: -3px 0 0 12px;
+}
+form .content .details p{
+  font-size: 17px;
+  font-weight: 500;
+}
+.content .details {
+  display: flex;
+  height: 25px;
+  cursor: pointer;
+  padding: 0 10px;
+  font-size: 11px;
+  margin-top: 3px;
+  border-radius: 5px;
+  align-items: center;
+  max-width: 98px;
+  background: black;
+  justify-content: space-between;
+}
+.details span{
+  font-size: 13px;
+  margin-top: 1px;
+  font-weight: 500;
+}
+.details .privacy i:last-child{
+  font-size: 13px;
+  margin-left: 1px;
+}
+form :where(textarea, button){
+  width: 100%;
+  outline: none;
+  border: none;
+}
+form textarea{
+  resize: none;
+  font-size: 18px;
+  margin-top: 30px;
+  min-height: 100px;
+}
+form textarea::placeholder{
+  color: #0f0a0a;
+}
+form textarea:focus::placeholder{
+  color: black;
+}
+
+form button{
+  height: 43px;
+  color: black;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  color: black;
+  cursor: no-drop;
+  border-radius: 7px;
+  background: white;
+  transition: all 0.3s ease;
+}
+form textarea:valid ~ button{
+  color: black;
+  cursor: pointer;
+  background: blue;
+}
+form textarea:valid ~ button:hover{
+  background: blue;
+}

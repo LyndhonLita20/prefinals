@@ -10,91 +10,147 @@ import { Database,remove,ref,update, onValue, set} from '@angular/fire/database'
 })
 export class PostComponent {
 
-  username = sessionStorage.getItem('id');
+  name =  sessionStorage.getItem('id');
+  post = "";
+  uid = "";
   data = "";
   names = "";
   sent = true;
-  role =true;
-  post = "";
-  name ="";
- currentpost="";
- currentcomment="";
- 
- comid="";
-  account!: Observable<any[]>;
+  comid="";
+  currentpost=""
+  currentcomment="";
+  comment=false;
+  replies=false;
+  users!: Observable<any[]>;
   comments!: Observable<any[]>;
+  reply!: Observable<any[]>;
+  likesCount: number = 0;
+
+
   constructor(public database: Database, private FireDb: AngularFireDatabase) {
- 
-  this.account = FireDb.list('/post').valueChanges();
- 
-  const starCountRef = ref(this.database, 'users/' + this.username);
+  this.users = FireDb.list('/post').valueChanges();
+  this.name = sessionStorage.getItem('id');
+
+  const starCountRef = ref(this.database, 'users/' + this.names);
     onValue(starCountRef, (snapshot) => {
-     const db = snapshot.val();  
-  this.name = db.email;
-  this.role = db.admin;
-  
-     });
- 
- console.log(this.name)
- console.log(this.role)
-   if(this.names !=""){
-     this.sent = true;
-   }else if(this.names == ""){
-     this.sent = false;
-   }
-   }
-   
- 
-   del(value: any){
-     remove(ref(this.database, 'post/' + value));
-     alert('Deleted Successfully')
-   }
-   
-   ngOnInit(): void {
-   }
-   uuid = "";
-   upload(value:any){
-     this.uuid = "post" +Math.floor(100000 + Math.random() * 900000);
-     set(ref(this.database, 'post/' + this.uuid), {   
-         name: value.name,
-         post: value.post,
-         id: this.uuid
-  
-        }); 
-        alert('Posted!');
- 
-       this.post = "";
-       }
- 
-       delete(value: any){
-         remove(ref(this.database, 'post/' + value));
-         alert('Deleted Succesfully')
-       }
-       //commenting
-      commenter(value: any){
-        this.comid = "comment" + Math.floor(100000 + Math.random() * 900000);
-        set(ref(this.database, 'post/'+value.id+'/comment/ ' + this.comid),{
-          name: value.name,
-          comment: value.post,
-          id: this.comid,
-          postid: value.id,
-        });
-        alert('Successfully Commented!');
-        this.post="";
-      }
+    const db = snapshot.val();  
+    this.names = db.names;
 
-      //display comment
-      getComment(post:any){
-      this.comments = this.FireDb.list('/post/'+post+'/comment/').valueChanges();
-      this.currentpost=post;
-      }
+});
 
-      //logout
-      logout(){
-        sessionStorage.clear();
-      }
- 
+if(this.names != ""){
+this.sent = true;
+}else if(this.names == ""){
+  this.sent = false;
+  }
+
+}
+
+  ngOnInit(): void {
+  
+  }
+      
+//for posting
+posted(value:any){
+    this.uid = "post" + Math.floor(100000 + Math.random() * 900000);
+    set(ref(this.database, 'post/' + this.uid), {   
+        names: value.names,
+        post: value.post,
+        id: this.uid
+   
+ }); 
+    alert('Posted!');
+    this.post = "";
  }
+
+//delete post
+    del(value: any){
+    remove(ref(this.database, 'post/' + value));
+    alert('Deleted Successfully')
+    }
+
+//logout account
+    logout(){
+    sessionStorage.clear();
+        }
+
+//for commenting
+  comm(value: any){
+      this.comid = "comment" +Math.floor(100000 + Math.random() * 900000);
+      set(ref(this.database, 'post/'+value.id+'/comment/ '+ this.comid), {   
+      name: value.name,
+      comment: value.post,
+      id: this.comid,
+      postid: value.id,       
+ }); 
+      alert('Successfully Commented!');
+      this.post = "";
+
+  }
+      
+//displaying comments
+  getComment(post:any){
+    this.comments = this.FireDb.list('/post/'+post+'/comment/').valueChanges();
+    this.currentpost=post;
+  }
+
+//deleting comments
+      delcomment(value: any){
+      remove(ref(this.database, '/post/'+this.currentpost+'/comment/ '+value));
+      alert('Deleted Successfully')
+    }
+
+//for reply
+    replycom(reply:any){
+          this.comid = "reply" +Math.floor(100000 + Math.random() * 900000);
+          set(ref(this.database, 'post/'+this.currentpost+'/comment/ '+this.currentcomment+'/reply/'+ this.comid), {   
+              name: reply.name,
+              reply: reply.post,
+              id: this.comid,
+              postid: this.currentpost,
+              commentid: this.currentcomment,         
+  }); 
+             alert('Reply Sent');
+             this.post = "";
+             this.comment=true;
+             this.replies=false;
+  }
+
+//display replies
+      getReply(reply:any){
+          this.reply = this.FireDb.list('/post/'+this.currentpost+'/comment/ '+reply+'/reply/').valueChanges();
+          this.currentcomment=reply  
+          this.replies=true;
+          this.comment=false;
+         
+  }
+
+//delete replies
+      delreply(value: any){
+        remove(ref(this.database, '/post/'+this.currentpost+'/comment/ '+ this.currentcomment+'/reply/'+ value));
+        alert('Deleted Successfully')
+  }
+  
+  //like function
+    like(userss: any) {
+      let likes = userss.likes?.value || 0;
+      likes++;
+      set(ref(this.database, 'post/' + userss.id + '/likes/value'), likes);
+      this.likesCount = likes;
+    }
+    
+  //unlike function
+    unlike(userss: any) {
+      let likes = userss.likes?.value || 0;
+      likes--;
+      set(ref(this.database, 'post/' + userss.id +  '/likes/value'), likes);
+      remove(ref(this.database, 'post/' + userss.id + '/likes/' + this.name));
+      this.likesCount = likes;
+    }
+ 
+     
+  }
+    
 
 
 //   username = sessionStorage.getItem('id');
